@@ -52,6 +52,7 @@ static int setup_syscheck_config(void **state) {
     syscheck_conf->database_store            = FIM_DB_DISK;
     syscheck_conf->sync_interval             = 300;
     syscheck_conf->min_sync_interval         = 60;
+    syscheck_conf->sync_thread_pool          = 1;
     syscheck_conf->db_entry_file_limit       = 100000;
 #ifdef WIN32
     syscheck_conf->db_entry_registry_limit   = 100000;
@@ -105,14 +106,16 @@ void test_fim_initialize(void **state)
                                syscheck_conf->db_entry_file_limit,
                                syscheck_conf->min_sync_interval,
                                syscheck_conf->db_entry_registry_limit,
-                               1);
+                               1,
+                               syscheck_conf->sync_thread_pool);
 #else
     expect_wrapper_fim_db_init(syscheck_conf->database_store,
                                syscheck_conf->sync_interval,
                                syscheck_conf->db_entry_file_limit,
                                syscheck_conf->min_sync_interval,
                                0,
-                               0);
+                               0,
+                               syscheck_conf->sync_thread_pool);
 #endif
     fim_initialize();
 }
