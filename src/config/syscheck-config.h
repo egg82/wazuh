@@ -407,6 +407,7 @@ typedef struct _config {
     uint32_t min_sync_interval;                        /* Minimum interval for synchronization process */
     long sync_max_eps;                                 /* Maximum events per second for synchronization messages. */
     int max_eps;                                       /* Maximum events per second. */
+    long sync_queue_size;                              /* Data synchronization message queue size */
 
     /* Windows only registry checking */
 #ifdef WIN32
