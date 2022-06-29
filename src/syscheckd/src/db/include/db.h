@@ -39,6 +39,7 @@ extern "C" {
  * @param min_sync_interval_time Minimum interval for synchronization process.
  * @param value_limit Maximum number of registry values to be monitored.
  * @param sync_registry_enable Flag to enable the registry synchronization.
+ * @param sync_queue_size Number to define the size of the queue to be synchronized.
  *
  * @return FIMDB_OK on success, FIMDB_ERROR on error.
  */
@@ -49,7 +50,8 @@ FIMDBErrorCode fim_db_init(int storage,
                            int file_limit,
                            uint32_t min_sync_interval_time,
                            int value_limit,
-                           bool sync_registry_enabled);
+                           bool sync_registry_enabled,
+                           int sync_queue_size);
 
 /**
  * @brief Get entry data using path.

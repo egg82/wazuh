@@ -86,7 +86,8 @@ int main(int argc, const char* argv[])
                                     fileLimit,
                                     minSyncInterval,
                                     registryLimit,
-                                    syncRegistryEnabled);
+                                    syncRegistryEnabled,
+                                    0);
 
                 std::unique_ptr<TestContext> testContext { std::make_unique<TestContext>()};
                 testContext->outputPath = cmdLineArgs.outputFolder();

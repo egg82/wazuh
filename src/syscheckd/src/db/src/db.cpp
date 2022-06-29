@@ -31,7 +31,8 @@ void DB::init(const int storage,
               const int fileLimit,
               const uint32_t minSyncIntervalTime,
               const int valueLimit,
-              bool syncRegistryEnabled)
+              bool syncRegistryEnabled,
+              const int syncQueueSize=0)
 {
     auto path { storage == FIM_DB_MEMORY ? FIM_DB_MEMORY_PATH : FIM_DB_DISK_PATH };
     auto dbsyncHandler
@@ -120,7 +121,8 @@ FIMDBErrorCode fim_db_init(int storage,
                            int file_limit,
                            uint32_t min_sync_interval_time,
                            int value_limit,
-                           bool sync_registry_enabled)
+                           bool sync_registry_enabled,
+                           int sync_queue_size)
 {
     auto retVal { FIMDBErrorCode::FIMDB_ERR };
 
