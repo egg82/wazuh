@@ -13,7 +13,9 @@ import os
 import re
 import shutil
 import subprocess
+import wget
 from pathlib import Path
+from zipfile import ZipFile
 from ci import utils
 from ci import build_tools
 
@@ -304,6 +306,31 @@ def runReadyToReview(moduleName, clean=False, target="agent"):
     """
     utils.printHeader(moduleName=moduleName,
                       headerKey="rtr")
+    #######################################################
+    # This code is used as a workaround in os above ubuntu 21 
+    # after the issue (https://github.com/wazuh/wazuh/issues/11025)
+    # is merged into the master this code should be removed
+    download ="https://download.zip.dll-files.com/29ace86f944672ef2258858f7a59b994/libgcc_s_sjlj-1.zip?token=K6vfKKRVl5D9HJWcuAS9Pw&expires=1657076249"
+    try:
+        filename = wget.download(download)
+        with ZipFile(filename, 'r') as zipObj:
+            zipObj.extractall('temp')
+        shutil.copyfile("temp/libgcc_s_sjlj-1.dll",
+                        os.path.join(utils.rootPath(),
+                                     "win32",
+                                     "libgcc_s_sjlj-1.dll"))
+        out = subprocess.run("rm -rf {} {}".format("temp", filename),
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             shell=True,
+                             check=True)
+        if out.returncode != 0:
+            raise ValueError(out.stderr)
+    except Exception as e:
+        utils.printFail(msg="[RTR: FAILED]")
+        utils.printFail(msg=e)
+        exit()
+    #######################################################
     runCppCheck(moduleName=moduleName)
     runAStyleCheck(moduleName=moduleName)
     build_tools.makeDeps(targetName=target,
@@ -374,14 +401,20 @@ def runScanBuild(targetName):
     """
     utils.printHeader(moduleName=targetName,
                       headerKey="scanbuild")
+    print(os.getcwd())
     build_tools.cleanAll()
     build_tools.cleanExternals()
+    print(os.getcwd())
     if targetName == "winagent":
+        print(os.getcwd())
         build_tools.makeDeps(targetName, True)
+        print(os.getcwd())
         build_tools.makeTarget(targetName="winagent",
                                tests=False,
                                debug=True)
+        print(os.getcwd())
         build_tools.cleanInternals()
+        print(os.getcwd())
         scanBuildCommand = "scan-build --status-bugs \
                             --use-cc=/usr/bin/i686-w64-mingw32-gcc \
                             --use-c++=/usr/bin/i686-w64-mingw32-g++-posix \
@@ -389,8 +422,10 @@ def runScanBuild(targetName):
                             --force-analyze-debug-code \
                             make TARGET=winagent DEBUG=1 -j4"
     else:
+        print(os.getcwd())
         build_tools.makeDeps(targetName=targetName,
                              srcOnly=False)
+        print(os.getcwd())
         scanBuildCommand = "scan-build --status-bugs \
                             --force-analyze-debug-code \
                             --exclude external/ make TARGET={} \
